@@ -3,16 +3,14 @@ import styled from 'styled-components';
 const Footer = () => {
   return (
     <Wrapper>
-      <h5>
-        &copy; {new Date().getFullYear()}
-        <span> Sparkle Furniture</span>
-        <h5>All Rights Reserved</h5>
-      </h5>
+      &copy; {new Date().getFullYear()} - <span>Sparkle Furniture </span>
+      <h5> - All Rights Reserved</h5>
     </Wrapper>
   );
 };
 
 const Wrapper = styled.footer`
+  color: var(--clr-white);
   height: 5rem;
   display: flex;
   flex-direction: column;
@@ -23,6 +21,7 @@ const Wrapper = styled.footer`
   span {
     color: var(--clr-primary-5);
   }
+
   h5 {
     color: var(--clr-white);
     margin: 0.1rem;
