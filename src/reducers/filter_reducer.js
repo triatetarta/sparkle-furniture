@@ -12,10 +12,18 @@ import {
 const filter_reducer = (state, action) => {
   switch (action.type) {
     case LOAD_PRODUCTS:
+      let maxPrice = action.payload.map((p) => p.price);
+      maxPrice = Math.max(...maxPrice);
+
       return {
         ...state,
         all_products: [...action.payload],
         filtered_products: [...action.payload],
+        filters: {
+          ...state.filters,
+          max_price: maxPrice,
+          price: maxPrice,
+        },
       };
     case SET_GRIDVIEW:
       return {
@@ -55,6 +63,66 @@ const filter_reducer = (state, action) => {
       return {
         ...state,
         filtered_products: tempProducts,
+      };
+    case UPDATE_FILTERS:
+      const { name, value } = action.payload;
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          [name]: value,
+        },
+      };
+    case FILTER_PRODUCTS:
+      const { all_products } = state;
+      const { text, category, company, color, price, shipping } = state.filters;
+
+      let tempProducts2 = [...all_products];
+
+      if (text) {
+        tempProducts2 = tempProducts2.filter((product) => {
+          return product.name.toLowerCase().startsWith(text);
+        });
+      }
+      if (category !== 'all') {
+        tempProducts2 = tempProducts2.filter(
+          (product) => product.category === category
+        );
+      }
+      if (company !== 'all') {
+        tempProducts2 = tempProducts2.filter(
+          (product) => product.company === company
+        );
+      }
+      if (color !== 'all') {
+        tempProducts2 = tempProducts2.filter((product) => {
+          return product.colors.find((c) => c === color);
+        });
+      }
+      tempProducts2 = tempProducts2.filter((product) => product.price <= price);
+
+      if (shipping) {
+        tempProducts2 = tempProducts2.filter(
+          (product) => product.shipping === true
+        );
+      }
+
+      return {
+        ...state,
+        filtered_products: tempProducts2,
+      };
+    case CLEAR_FILTERS:
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          text: '',
+          company: 'all',
+          category: 'all',
+          color: 'all',
+          price: state.filters.max_price,
+          shipping: false,
+        },
       };
     default:
       return state;
